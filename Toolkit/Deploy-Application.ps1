@@ -121,20 +121,20 @@ Try {
 
         #Install ANSYS 2024 R2 Prep Post
         Execute-Process -Path "$dirFiles\PREPPOST_2024R2_WINX64\setup.exe" `
-        -Parameters "-silent -install_dir `"C:\Program Files\ANSYS Inc`" -licserverinfo `"2325:1055:vmw00250`"" `
+        -Parameters "-silent -install_dir `"<*INSTALL PATH HERE*>`" -licserverinfo `"2325:1055:<*LICENSE SERVER HERE*>`"" `
         -WindowStyle Hidden `
         -Passthru
 
         <#
 
-            ANSYS License Server - vmw00250
-            Default Ports - 2325,1055 
+            ANSYS License Server - <*LICENSE SERVER HERE*>
+            Default Ports - 2325,1055 <*DEFAULT ANSYS PORTS*>
 
             ## QUICK NOTE ABOUT THE PORTS ##
             
-            1055 is the normal default FLEXNet port
+            1055 is the default ANSYS FLEXNet port
 
-            2325 is the default Licensing Interconnect port
+            2325 is the default ANSYS Licensing Interconnect port
 
             When doing a normal install for ANSYS, only the 1055 port is required
             
@@ -145,33 +145,20 @@ Try {
             
             ** Make sure you are in the directory of the 'setup.exe' **
             
-            'setup.exe -silent -install_dir "C:\Program Files\ANSYS Inc" -licserverinfo 2325:1055:vmw00250'
+            'setup.exe -silent -install_dir "<*INSTALL PATH HERE*>" -licserverinfo 2325:1055:<*LICENSE SERVER HERE*>'
 
             ** Can also use a license file as well **
             
-            'setup.exe -silent -install_dir "C:\Program Files\ANSYS Inc" -licfilepath "path_to/license_file.lic"' 
+            'setup.exe -silent -install_dir "<*INSTALL PATH HERE*>" -licfilepath "path_to/license_file.lic"' 
 
         #>
 
         [String]$installPhase = 'Post-Installation'
 
         # Create a shortcut for the Application
-        New-Shortcut -Path "C:\Users\Public\Public Desktop\Ansys 2024 R2\Ansys Workbench.lnk" -TargetPath "C:\Program Files\ANSYS Inc\v242\Framework\bin\Win64\RunWB2.exe" -Description "Ansys Workbench"
+        New-Shortcut -Path "<*SHORCUT PATH HERE*>" -TargetPath "<*ANSYS WORKBENCH PATH HERE*>" -Description "Ansys Workbench"
 
         Show-DialogBox -Title "Installation Notice" -Text "Installation is complete" -Buttons "OK" -Icon Information -Timeout 100
-
-     
-
-        #Silent Ansys Uninstaller 
-        #New-Shortcut -Path "$dirFiles\Ansys Uninstaller\Ansys Unistall.lnk" -TargetPath "C:\Program Files\ANSYS Inc\v242\Uninstall.exe" -Arguments "-silent" -Description "Ansys Uninstaller"
-
-        #Normal Ansys Uninstaller
-        #New-Shortcut -Path "$dirFiles\Ansys Uninstaller\Ansys Unistall.lnk" -TargetPath "C:\Program Files\ANSYS Inc\v242\Uninstall.exe" -Description "Ansys Uninstaller"
-
-
-        #New-Shortcut -Path "C:\Users\$username\Desktop\Ansys 2024 R2.lnk" -TargetPath "C:\Program Files\ANSYS Inc\v242\Framework\bin\Win64\RunWB2.exe"
-    
-        
 
     }
     ElseIf ($deploymentType -ieq 'Uninstall') {
@@ -187,14 +174,14 @@ Try {
 
         [String]$installPhase = 'Uninstallation'
         
-        [string]$uninstallPath = "C:\Program Files\ANSYS Inc\v242\Uninstall.exe"
+        [string]$uninstallPath = "<*UNINSTALL PATH HERE*>"
 
         #Uninstall ANSYS 2024 R2 Prep Post
         Execute-Process -Path $uninstallPath -Parameters "-silent"
 
         [String]$installPhase = 'Post-Uninstallation'
 
-        Remove-File -Path "C:\Users\Public\Public Desktop\Ansys 2024 R2\Ansys Workbench.lnk"
+        Remove-File -Path "<*SHORCUT PATH HERE*>"
 
         Show-DialogBox -Title "Uninstallation Notice" -Text "Uninstallation is complete" -Buttons "OK" -Icon Information -Timeout 10
 
