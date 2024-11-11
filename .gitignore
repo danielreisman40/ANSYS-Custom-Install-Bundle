@@ -1,0 +1,9 @@
+# Make sure .vscode and its contents are not uploaded
+.vscode/
+
+*.exe
+*.exe.config
+*.zip
+
+Toolkit/Files/PREPPOST_2024R2_WINX64/
+
