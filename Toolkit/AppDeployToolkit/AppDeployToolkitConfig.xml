@@ -38,7 +38,7 @@
         <Toolkit_RegPath>HKLM:\SOFTWARE</Toolkit_RegPath>
         <!-- Registry key used to store toolkit information (with PSAppDeployToolkit as child
         registry key), e.g. deferral history. -->
-        <Toolkit_LogPath>C:\Windows\CCM\Logs\Ansys2024R2_Prep_Post_install.log</Toolkit_LogPath>
+        <Toolkit_LogPath>$envProgramData\Logs\Software</Toolkit_LogPath> <!-- Default logpath for PSADT -->
         <!-- Log path used for Toolkit logging. -->
         <Toolkit_TempPathNoAdminRights>$envTemp</Toolkit_TempPathNoAdminRights>
         <!-- Same as TempPath but used when RequireAdmin is False. -->
