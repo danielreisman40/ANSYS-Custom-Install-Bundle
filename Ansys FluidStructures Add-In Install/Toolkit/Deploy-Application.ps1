@@ -1,11 +1,11 @@
 ﻿<#
 .SYNOPSIS
 
-Installing ANSYS 2024 R2 PrepPost (Ansys Workbench)
+ANSYS 2024 R2 Fluid and Structures Add-In Installation
 
 .DESCRIPTION
 
-Bundling and Installing ANSYS 2024 R2 PrepPost (Ansys Workbench) through PSADT
+This file is the installation and uninstallation file for ANSYS 2024 R2 Fluid and Structures Add-In for ANSYS Workbench using PSADT
 
 .NOTES
 
@@ -35,6 +35,7 @@ Here is the normal ANSYS powershell command:
 
 #>
 
+
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $false)]
@@ -49,7 +50,6 @@ Param (
     [switch]$TerminalServerMode = $false,
     [Parameter(Mandatory = $false)]
     [switch]$DisableLogging = $false
-
 )
 
 Try {
@@ -64,13 +64,13 @@ Try {
     ##*===============================================
     ## Variables: Application
     [String]$appVendor = 'ANSYS Inc'
-    [String]$appName = 'ANSYS PREPPOST '
+    [String]$appName = 'ANSYS FluidStructures Add-In'
     [String]$appVersion = '2024 R2'
     [String]$appArch = 'x64'
     [String]$appLang = 'EN'
     [String]$appRevision = '01'
     [String]$appScriptVersion = '1.0.0'
-    [String]$appScriptDate = '11/01/2024'
+    [String]$appScriptDate = '11/14/2024'
     [String]$appScriptAuthor = 'Daniel Reisman'
     ##*===============================================
     ## Variables: Install Titles (Only set here to override defaults set by the toolkit)
@@ -78,7 +78,6 @@ Try {
     [String]$installTitle = ''
 
     ##* Do not modify section below
-    
     #region DoNotModify
 
     ## Variables: Exit Code
@@ -135,62 +134,36 @@ Try {
     If ($deploymentType -ine 'Uninstall' -and $deploymentType -ine 'Repair') {
        
         [String]$installPhase = 'Pre-Installation'
-
-        # Installation boxes will ONLY show if DeploymentMode is set to "Interactive"
-
-        Show-InstallationPrompt -Title "ANSYS 2024 R2 Prep Post Installation" -Message "ANSYS 2024 R2 Prep Post will begin to Install. `n`n Please wait until installation is finished" -NoWait -Timeout 10
-
-        Show-InstallationProgress -StatusMessage "ANSYS 2024 R2 Prep Post Installation in Progress... `n`n Please be patient."
-
+        
         [String]$installPhase = 'Installation'
 
-        #Install ANSYS 2024 R2 Prep Post
-        Execute-Process -Path "$dirFiles\PREPPOST_2024R2_WINX64\setup.exe" `
+        Execute-Process -Path "$dirFiles\FLUIDSTRUCTURES_2024R2_WINX64\setup.exe" `
         -Parameters "-silent -install_dir `"<*INSTALL PATH HERE*>`" -licserverinfo `"2325:1055:<*LICENSE SERVER HERE*>`"" `
         -WindowStyle Hidden `
         -Passthru
-
+        
         [String]$installPhase = 'Post-Installation'
 
-        # Create a shortcut for the Application
-        New-Shortcut -Path "<*SHORCUT PATH HERE*>" -TargetPath "<*ANSYS WORKBENCH PATH HERE*>" -Description "Ansys Workbench"
-
-        Show-DialogBox -Title "Installation Notice" -Text "Installation is complete" -Buttons "OK" -Icon Information -Timeout 100
-
+        
     }
     ElseIf ($deploymentType -ieq 'Uninstall') {
-        
+       
         [String]$installPhase = 'Pre-Uninstallation'
 
-        # Stop any and all Ansys Processes
-        Get-Process | Where-Object {$_.Name -like "*Ansys*"} | Stop-Process -Force
-
-        Show-InstallationPrompt -Title "ANSYS 2024 R2 Prep Post" -Message "Beginning Uninstallation for ANSYS 2024 R2 Prep Post `n`n Please wait until uninstallation is finished." -NoWait -Timeout 10
-
-        Show-InstallationProgress -StatusMessage "ANSYS R2 2024 Prep Post Uninstallation in Progress"
-
         [String]$installPhase = 'Uninstallation'
-        
-        [string]$uninstallPath = "<*UNINSTALL PATH HERE*>"
-
-        #Uninstall ANSYS 2024 R2 Prep Post
-        Execute-Process -Path $uninstallPath -Parameters "-silent"
 
         [String]$installPhase = 'Post-Uninstallation'
 
-        Remove-File -Path "<*SHORCUT PATH HERE*>"
 
-        Show-DialogBox -Title "Uninstallation Notice" -Text "Uninstallation is complete" -Buttons "OK" -Icon Information -Timeout 10
-
-        
     }
     ElseIf ($deploymentType -ieq 'Repair') {
-
+        
         [String]$installPhase = 'Pre-Repair'
 
         [String]$installPhase = 'Repair'
 
         [String]$installPhase = 'Post-Repair'
+
 
 
     }
