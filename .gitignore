@@ -1,9 +1,11 @@
 # Make sure .vscode and its contents are not uploaded
-.vscode/
+.vscode/*
 
 *.exe
 *.exe.config
 *.zip
 
-Ansys PrepPost Install (Ansys Workbench)/Toolkit/Files/PREPPOST_2024R2_WINX64/
-Ansys FluidStructures Add-In Install/Toolkit/Files/FLUIDSTRUCTURES_2024R2_WINX64/
+Ansys PrepPost Install (Ansys Workbench)/Toolkit/Files/*
+Ansys FluidStructures Add-In Install/Toolkit/Files/*
+Ansys GRANTA EduPack Install/Toolkit/Files/*
+Ansys Electronics Install (AnsysEM)/Toolkit/Files/*

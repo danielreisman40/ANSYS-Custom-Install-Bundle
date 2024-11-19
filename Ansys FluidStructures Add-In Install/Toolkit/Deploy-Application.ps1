@@ -5,7 +5,14 @@ ANSYS 2024 R2 Fluid and Structures Add-In Installation
 
 .DESCRIPTION
 
-This file is the installation and uninstallation file for ANSYS 2024 R2 Fluid and Structures Add-In for ANSYS Workbench using PSADT
+This file is the installation and uninstallation script for ANSYS 2024 R2 Fluid and Structures Add-In for ANSYS Workbench using PSADT
+in order to deploy the application over SCCM
+
+This script should:
+
+1. Install the application silently
+2. Uninstall the application silently
+3. Report progress (and other information) to logs
 
 .NOTES
 
@@ -18,7 +25,7 @@ Default Ports - 2325,1055 <*DEFAULT ANSYS PORTS*>
 
 2325 is the default ANSYS Licensing Interconnect port
 
-When doing a normal install for ANSYS, only the 1055 port is required
+When doing a normal install for ANSYS Workbench, only the 1055 port is required
 
 But when running the 'setup.exe' from powershell and putting the license server info as part of a parameter
 then the other port is also required
@@ -134,6 +141,12 @@ Try {
     If ($deploymentType -ine 'Uninstall' -and $deploymentType -ine 'Repair') {
        
         [String]$installPhase = 'Pre-Installation'
+
+        # Check if Ansys Workbench is open
+        Get-Process -Name "Ansys Workbench*"
+
+        # Close Ansys Workbench if open
+        Stop-Process -Name "Ansys Workbench*" -Confirm
         
         [String]$installPhase = 'Installation'
 

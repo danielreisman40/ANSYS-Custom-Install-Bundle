@@ -1,11 +1,11 @@
 ﻿<#
 .SYNOPSIS
 
-ANSYS 2024 R2 Prep Post (Ansys Workbench) Installation
+ANSYS 2024 R2 Granta EduPack Installation 
 
 .DESCRIPTION
 
-Bundling and Installing ANSYS 2024 R2 PrepPost (Ansys Workbench) through PSADT
+This file is the installation and uninstallation script for ANSYS Granta EduPack v. 2024 R2 
 in order to deploy the application over SCCM
 
 This script should:
@@ -14,34 +14,26 @@ This script should:
 2. Uninstall the application silently
 3. Report progress (and other information) to logs
 
-
 .NOTES
 
 ANSYS License Server - <*LICENSE SERVER HERE*>
-Default Ports - 2325,1055 <*DEFAULT ANSYS PORTS*>
+Default Ports - 1055 <*DEFAULT ANSYS PORTS*>
 
-## QUICK NOTE ABOUT THE PORTS ##
+NOTES ABOUT GRANTA EDUPACK SILENT INSTALLATION
 
 1055 is the default ANSYS FLEXNet port
 
-2325 is the default ANSYS Licensing Interconnect port
+ANSYS Granta EduPack does NOT use the 2325 Licensing Interconnect Port
 
-When doing a normal install for ANSYS, only the 1055 port is required
+Install command for the Granta EduPack '.exe' setup file:
 
-But when running the 'setup.exe' from powershell and putting the license server info as part of a parameter
-then the other port is also required
+** Please ensure you are in the directory of the '.exe' file **
 
-Here is the normal ANSYS powershell command:
-
-** Make sure you are in the directory of the 'setup.exe' **
-
-'setup.exe -silent -install_dir "<*INSTALL PATH HERE*>" -licserverinfo 2325:1055:<*LICENSE SERVER HERE*>'
-
-** Can also use a license file as well **
-
-'setup.exe -silent -install_dir "<*INSTALL PATH HERE*>" -licfilepath "path_to/license_file.lic"' 
+edupack_setup.XXXX_RY.exe /licenseServer:1055@<*LICENSE SERVER HERE*> /install
+/quiet
 
 #>
+
 
 [CmdletBinding()]
 Param (
@@ -57,7 +49,6 @@ Param (
     [switch]$TerminalServerMode = $false,
     [Parameter(Mandatory = $false)]
     [switch]$DisableLogging = $false
-
 )
 
 Try {
@@ -72,13 +63,13 @@ Try {
     ##*===============================================
     ## Variables: Application
     [String]$appVendor = 'ANSYS Inc'
-    [String]$appName = 'ANSYS PREPPOST '
+    [String]$appName = ' ANSYS Granta EduPack'
     [String]$appVersion = '2024 R2'
     [String]$appArch = 'x64'
     [String]$appLang = 'EN'
     [String]$appRevision = '01'
     [String]$appScriptVersion = '1.0.0'
-    [String]$appScriptDate = '11/01/2024'
+    [String]$appScriptDate = '11/18/2024'
     [String]$appScriptAuthor = 'Daniel Reisman'
     ##*===============================================
     ## Variables: Install Titles (Only set here to override defaults set by the toolkit)
@@ -86,7 +77,6 @@ Try {
     [String]$installTitle = ''
 
     ##* Do not modify section below
-    
     #region DoNotModify
 
     ## Variables: Exit Code
@@ -141,74 +131,73 @@ Try {
     ##*===============================================
 
     If ($deploymentType -ine 'Uninstall' -and $deploymentType -ine 'Repair') {
-       
+        
         [String]$installPhase = 'Pre-Installation'
 
-        # Check if Ansys Workbench is open
+        # Check Granta EduPack if already running
+        Get-Process -Name "Granta EduPack*"
+
+        # Check Ansys Workbench if already running
         Get-Process -Name "Ansys Workbench*"
 
-        # Close Ansys Workbench if open
+        # Close Granta EduPack if already running
+        Stop-Process -Name "Granta EduPack*" -Confirm
+
+        # Close the Ansys Workbench if already running
         Stop-Process -Name "Ansys Workbench*" -Confirm
-
-        # Installation boxes will ONLY show if DeploymentMode is set to "Interactive"
-
-        #Show-InstallationPrompt -Title "ANSYS 2024 R2 Prep Post Installation" -Message "ANSYS 2024 R2 Prep Post will begin to Install. `n`n Please wait until installation is finished" -NoWait -Timeout 10
-
-        #Show-InstallationProgress -StatusMessage "ANSYS 2024 R2 Prep Post Installation in Progress... `n`n Please be patient."
-
+ 
         [String]$installPhase = 'Installation'
 
-        #Install ANSYS 2024 R2 Prep Post
-        Execute-Process -Path "$dirFiles\PREPPOST_2024R2_WINX64\setup.exe" `
-        -Parameters "-silent -install_dir `"<*INSTALL PATH HERE*>`" -licserverinfo `"2325:1055:<*LICENSE SERVER HERE*>`"" `
+        # Install Granta EduPack on Silent Mode
+        Execute-Process -Path "$dirFiles\GRANTAEDUPACK_2024R2_WINX64\edupack_setup.2024_R2.exe" `
+        -Parameters "/licenseServer:1055@<*LICENSE SERVER HERE*> /install /quiet" `
         -WindowStyle Hidden `
-        -Passthru
+        -Passthru 
 
         [String]$installPhase = 'Post-Installation'
 
-        # Create a shortcut for the Application
-        New-Shortcut -Path "<*SHORCUT PATH HERE*>" -TargetPath "<*ANSYS WORKBENCH PATH HERE*>" -Description "Ansys Workbench"
-
-        #Show-DialogBox -Title "Installation Notice" -Text "Installation is complete" -Buttons "OK" -Icon Information -Timeout 100
+        # Copy the Granta EduPack shortcut to the public desktop
+        Copy-Item -path "<*Granta EduPack Install Path*>\Granta EduPack 2024 R2.lnk" -Destination "<*SHORTCUT PATH HERE*>" 
 
     }
     ElseIf ($deploymentType -ieq 'Uninstall') {
-        
+       
         [String]$installPhase = 'Pre-Uninstallation'
 
-        # Check if Ansys Workbench is open
+        # Check Granta EduPack if already running
+        Get-Process -Name "Granta EduPack*"
+
+        # Check Ansys Workbench if already running
         Get-Process -Name "Ansys Workbench*"
 
-        # Close Ansys Workbench if open
+        # Close Granta EduPack if already running
+        Stop-Process -Name "Granta EduPack*" -Confirm
+
+        # Close the Ansys Workbench if already running
         Stop-Process -Name "Ansys Workbench*" -Confirm
-
-        #Show-InstallationPrompt -Title "ANSYS 2024 R2 Prep Post" -Message "Beginning Uninstallation for ANSYS 2024 R2 Prep Post `n`n Please wait until uninstallation is finished." -NoWait -Timeout 10
-
-        #Show-InstallationProgress -StatusMessage "ANSYS R2 2024 Prep Post Uninstallation in Progress"
-
-        [String]$installPhase = 'Uninstallation'
         
-        [string]$uninstallPath = "<*UNINSTALL PATH HERE*>"
+        [String]$installPhase = 'Uninstallation'
 
-        #Uninstall ANSYS 2024 R2 Prep Post
-        Execute-Process -Path $uninstallPath -Parameters "-silent"
+        # Find the application in the control panel in "Program and Features"
+        $app = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "Granta EduPack 2024 R2"}
+
+        # Uninstall the app once found
+        $app.Uninstall()
 
         [String]$installPhase = 'Post-Uninstallation'
 
-        Remove-File -Path "<*SHORCUT PATH HERE*>"
+        # Get rid of the shortcut once app is uninstalled
+        Remove-Item -Path "<*SHORTCUT PATH HERE*>"
 
-        #Show-DialogBox -Title "Uninstallation Notice" -Text "Uninstallation is complete" -Buttons "OK" -Icon Information -Timeout 10
 
-        
     }
     ElseIf ($deploymentType -ieq 'Repair') {
-
+       
         [String]$installPhase = 'Pre-Repair'
 
         [String]$installPhase = 'Repair'
 
         [String]$installPhase = 'Post-Repair'
-
 
     }
 

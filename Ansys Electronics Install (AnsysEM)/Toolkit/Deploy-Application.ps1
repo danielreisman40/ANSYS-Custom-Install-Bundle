@@ -1,11 +1,11 @@
 ﻿<#
 .SYNOPSIS
 
-ANSYS 2024 R2 Prep Post (Ansys Workbench) Installation
+ANSYS 2024 R2 Electronics Desktop Installation 
 
 .DESCRIPTION
 
-Bundling and Installing ANSYS 2024 R2 PrepPost (Ansys Workbench) through PSADT
+This file is the installation and uninstallation script for ANSYS 2024 R2 Electronic Desktop for ANSYS Workbench using PSADT
 in order to deploy the application over SCCM
 
 This script should:
@@ -14,34 +14,8 @@ This script should:
 2. Uninstall the application silently
 3. Report progress (and other information) to logs
 
-
-.NOTES
-
-ANSYS License Server - <*LICENSE SERVER HERE*>
-Default Ports - 2325,1055 <*DEFAULT ANSYS PORTS*>
-
-## QUICK NOTE ABOUT THE PORTS ##
-
-1055 is the default ANSYS FLEXNet port
-
-2325 is the default ANSYS Licensing Interconnect port
-
-When doing a normal install for ANSYS, only the 1055 port is required
-
-But when running the 'setup.exe' from powershell and putting the license server info as part of a parameter
-then the other port is also required
-
-Here is the normal ANSYS powershell command:
-
-** Make sure you are in the directory of the 'setup.exe' **
-
-'setup.exe -silent -install_dir "<*INSTALL PATH HERE*>" -licserverinfo 2325:1055:<*LICENSE SERVER HERE*>'
-
-** Can also use a license file as well **
-
-'setup.exe -silent -install_dir "<*INSTALL PATH HERE*>" -licfilepath "path_to/license_file.lic"' 
-
 #>
+
 
 [CmdletBinding()]
 Param (
@@ -57,7 +31,6 @@ Param (
     [switch]$TerminalServerMode = $false,
     [Parameter(Mandatory = $false)]
     [switch]$DisableLogging = $false
-
 )
 
 Try {
@@ -72,13 +45,13 @@ Try {
     ##*===============================================
     ## Variables: Application
     [String]$appVendor = 'ANSYS Inc'
-    [String]$appName = 'ANSYS PREPPOST '
+    [String]$appName = 'AnsysEM'
     [String]$appVersion = '2024 R2'
     [String]$appArch = 'x64'
     [String]$appLang = 'EN'
     [String]$appRevision = '01'
     [String]$appScriptVersion = '1.0.0'
-    [String]$appScriptDate = '11/01/2024'
+    [String]$appScriptDate = '11/19/2024'
     [String]$appScriptAuthor = 'Daniel Reisman'
     ##*===============================================
     ## Variables: Install Titles (Only set here to override defaults set by the toolkit)
@@ -86,7 +59,6 @@ Try {
     [String]$installTitle = ''
 
     ##* Do not modify section below
-    
     #region DoNotModify
 
     ## Variables: Exit Code
@@ -141,74 +113,59 @@ Try {
     ##*===============================================
 
     If ($deploymentType -ine 'Uninstall' -and $deploymentType -ine 'Repair') {
-       
+        
         [String]$installPhase = 'Pre-Installation'
 
-        # Check if Ansys Workbench is open
-        Get-Process -Name "Ansys Workbench*"
+        # Check to see if the Electronics Desktop is running
 
-        # Close Ansys Workbench if open
-        Stop-Process -Name "Ansys Workbench*" -Confirm
+        Get-Process -Name "Electronics Desktop*"
 
-        # Installation boxes will ONLY show if DeploymentMode is set to "Interactive"
-
-        #Show-InstallationPrompt -Title "ANSYS 2024 R2 Prep Post Installation" -Message "ANSYS 2024 R2 Prep Post will begin to Install. `n`n Please wait until installation is finished" -NoWait -Timeout 10
-
-        #Show-InstallationProgress -StatusMessage "ANSYS 2024 R2 Prep Post Installation in Progress... `n`n Please be patient."
+        Stop-Process -Name "Electronics Desktop*" -Confirm
 
         [String]$installPhase = 'Installation'
 
-        #Install ANSYS 2024 R2 Prep Post
-        Execute-Process -Path "$dirFiles\PREPPOST_2024R2_WINX64\setup.exe" `
-        -Parameters "-silent -install_dir `"<*INSTALL PATH HERE*>`" -licserverinfo `"2325:1055:<*LICENSE SERVER HERE*>`"" `
-        -WindowStyle Hidden `
+        Execute-Process -Path "$dirFiles\ELECTRONICS_2024R2_WINX64\Electronics_242_winx64\AnsysEM\setup.exe" `
+        -Parameters "-silent -licserverinfo `"2325:1055:<*LICENSE SERVER HERE*>`"" `
+        -WindowStyle hidden
         -Passthru
 
         [String]$installPhase = 'Post-Installation'
 
-        # Create a shortcut for the Application
-        New-Shortcut -Path "<*SHORCUT PATH HERE*>" -TargetPath "<*ANSYS WORKBENCH PATH HERE*>" -Description "Ansys Workbench"
+        # Create a shortcut for AnsysEM Electronics Desktop
 
-        #Show-DialogBox -Title "Installation Notice" -Text "Installation is complete" -Buttons "OK" -Icon Information -Timeout 100
+        New-Shortcut -Path "<* SHORCUT PATH HERE *>" -TargetPath "<* ELECTRONICS DESKTOP PATH HERE *>" -Description "Electronic Desktop 2024 R2"
+
 
     }
     ElseIf ($deploymentType -ieq 'Uninstall') {
-        
+       
         [String]$installPhase = 'Pre-Uninstallation'
 
-        # Check if Ansys Workbench is open
-        Get-Process -Name "Ansys Workbench*"
+        
+        # Check to see if the Electronics Desktop is running
 
-        # Close Ansys Workbench if open
-        Stop-Process -Name "Ansys Workbench*" -Confirm
+        Get-Process -Name "Electronics Desktop*"
 
-        #Show-InstallationPrompt -Title "ANSYS 2024 R2 Prep Post" -Message "Beginning Uninstallation for ANSYS 2024 R2 Prep Post `n`n Please wait until uninstallation is finished." -NoWait -Timeout 10
-
-        #Show-InstallationProgress -StatusMessage "ANSYS R2 2024 Prep Post Uninstallation in Progress"
+        Stop-Process -Name "Electronics Desktop*" -Confirm
 
         [String]$installPhase = 'Uninstallation'
-        
-        [string]$uninstallPath = "<*UNINSTALL PATH HERE*>"
 
-        #Uninstall ANSYS 2024 R2 Prep Post
-        Execute-Process -Path $uninstallPath -Parameters "-silent"
+        # Uninstall Electronics Desktop
+
+        Execute-Process -Path "<* PATH TO INSTALLATION *>\AnsysEM\v242\Win64\Uninstall\setup.exe" -Parameters "-silent"
 
         [String]$installPhase = 'Post-Uninstallation'
 
-        Remove-File -Path "<*SHORCUT PATH HERE*>"
+        Remove-File -Path "<* SHORCUT PATH HERE *>"
 
-        #Show-DialogBox -Title "Uninstallation Notice" -Text "Uninstallation is complete" -Buttons "OK" -Icon Information -Timeout 10
-
-        
     }
     ElseIf ($deploymentType -ieq 'Repair') {
-
+        
         [String]$installPhase = 'Pre-Repair'
 
         [String]$installPhase = 'Repair'
 
         [String]$installPhase = 'Post-Repair'
-
 
     }
 
