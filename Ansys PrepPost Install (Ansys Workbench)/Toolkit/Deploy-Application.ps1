@@ -183,7 +183,6 @@ Try {
         Stop-Process -Name "Ansys Workbench*" -Confirm
 
         #Show-InstallationPrompt -Title "ANSYS 2024 R2 Prep Post" -Message "Beginning Uninstallation for ANSYS 2024 R2 Prep Post `n`n Please wait until uninstallation is finished." -NoWait -Timeout 10
-
         #Show-InstallationProgress -StatusMessage "ANSYS R2 2024 Prep Post Uninstallation in Progress"
 
         [String]$installPhase = 'Uninstallation'
