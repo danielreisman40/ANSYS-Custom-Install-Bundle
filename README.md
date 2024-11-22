@@ -8,7 +8,7 @@ The purpose of this project was to create a custom installation bundle for ANSYS
 
 This project is meant to be a skeleton or basis to bundle Ansys products using PSADT in order to deploy the applications through SCCM/Intune
 
-ANSYS Installation Version - 2024 R2
+- ANSYS Installation Version - 2024 R2
 
 - The packs that these shells install are:
     - ANSYS Prep Post (Ansys Workbench)
