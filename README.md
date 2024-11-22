@@ -10,7 +10,7 @@ This project is meant to be a skeleton or basis to bundle Ansys products using P
 
 ANSYS Installation Version - 2024 R2
 
-The packs that these shells install are: <br>
+- The packs that these shells install are:
     - ANSYS Prep Post (Ansys Workbench)
     - ANSYS FluidStructures (Fluid and Structures Add-In)
     - ANSYS Electronics Desktop (AnsysEM)
